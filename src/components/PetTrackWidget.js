@@ -41,31 +41,31 @@ export default function PetTrackWidget() {
   return (
     <div
       onClick={() => router.push("/pettrack")}
-      className="bg-gradient-to-br from-green-400 to-green-600 rounded-lg shadow-md p-6 hover:shadow-lg transition cursor-pointer"
+      className="bg-[#f5f7f3] border border-[#dbe1d4] rounded-2xl p-6 hover:bg-[#eef2e9] hover:shadow-sm transition cursor-pointer"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="bg-white bg-opacity-20 p-3 rounded-lg">
-            <MessageSquare className="text-white" size={28} />
+          <div className="bg-[#697a63] p-3 rounded-lg">
+            <MessageSquare className="text-white" size={24} />
           </div>
-          <h3 className="text-2xl font-bold text-white">PetTrack</h3>
+          <h3 className="text-2xl font-bold text-[#4f5a4c]">PetTrack</h3>
         </div>
-        <ChevronRight className="text-white opacity-70" size={24} />
+        <ChevronRight className="text-[#697a63]" size={24} />
       </div>
 
       {loading ? (
-        <p className="text-white text-opacity-90">Loading...</p>
+        <p className="text-[#697a63]">Loading...</p>
       ) : unreadCount > 0 ? (
         <div>
-          <p className="text-white text-lg font-semibold">
+          <p className="text-[#4f5a4c] text-lg font-semibold">
             {unreadCount} new {unreadCount === 1 ? "post" : "posts"}
           </p>
-          <p className="text-white text-opacity-90 text-sm">
+          <p className="text-[#697a63] text-sm">
             Click to view unread issues
           </p>
         </div>
       ) : (
-        <p className="text-white text-opacity-90">All caught up!</p>
+        <p className="text-[#697a63]">All caught up!</p>
       )}
     </div>
   );

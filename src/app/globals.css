@@ -1,8 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
 
+
 :root {
-  --background: #ffffff;
-  --foreground: #d9d9d9;
+  --background: #fdfdfd;
+  --foreground: #fdfdfd;
+}
+
+.lora-font {
+  font-family: "Lora", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.brada-font {
+  font-family: "Brada Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
 @theme inline {
@@ -15,14 +28,24 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: rgb(245, 245, 245);
-    --foreground: #ededed;
+    --foreground: #f1f3ed;
   }
 }
 
 body {
   background: var(--background);
   color: #333;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Brada Sans", "Helvetica Neue", Arial, sans-serif;
+  caret-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Lora", serif;
 }
 
 .archivo {
@@ -37,37 +60,13 @@ h1 {
   font-size: 4.6rem;
   font-style: normal;
   font-weight: 500;
-  text-transform: lowercase;
-  font-family: "Archivo", sans-serif;
   font-optical-sizing: auto;
   font-variation-settings: "wdth" 100;
-  color: #333;
   line-height: 3.4rem;
 }
 
-h2 {
-  font-size: 1.2rem;
-  font-family: "Archivo", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings: "wdth" 100;
-  color: #333;
-}
 
-h4 {
-  text-transform: lowercase;
-  font-optical-sizing: auto;
-  font-variation-settings: "wdth" 100;
-  color: #333;
-  font-family: Archivo, sans-serif;
-  font-size: 1.3rem;
-  font-style: normal;
-  font-weight: 200;
-  line-height: 1.2rem;
-  border-top: 1px solid #00b478;
-  padding-top: 0.4rem;
-}
+
 
 .topnav {
   /* gradient emerald-500 (#10b981) → emerald-700 (#047857) */

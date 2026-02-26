@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${archivo.variable} antialiased`}>
         <Navbar />
-        <div className="md:mx-16">{children}</div>
+        <div className="ml-0 md:ml-25 lg:ml-64 min-h-screen">{children}</div>
       </body>
     </html>
   );

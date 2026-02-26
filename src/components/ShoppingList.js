@@ -4,6 +4,7 @@ import { Plus, Edit, Trash2, Loader, AlertCircle, Check } from "lucide-react";
 export default function ShoppingList() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [pets, setPets] = useState([]);
@@ -26,6 +27,7 @@ export default function ShoppingList() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setErrorMessage("");
       const [itemsRes, petsRes] = await Promise.all([
         fetch("/api/shopping"),
         fetch("/api/pets"),
@@ -38,6 +40,7 @@ export default function ShoppingList() {
       setPets(Array.isArray(petsData) ? petsData : []);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setErrorMessage("Could not load shopping data. Please refresh.");
       setItems([]);
       setPets([]);
     } finally {
@@ -57,6 +60,7 @@ export default function ShoppingList() {
     e.preventDefault();
 
     try {
+      setErrorMessage("");
       let response;
       if (editingItem) {
         response = await fetch(`/api/shopping/${editingItem._id}`, {
@@ -81,9 +85,13 @@ export default function ShoppingList() {
         setShowForm(false);
         setEditingItem(null);
         resetForm();
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setErrorMessage(errorData.error || "Failed to save shopping item.");
       }
     } catch (error) {
       console.error("Error saving item:", error);
+      setErrorMessage("Failed to save shopping item.");
     }
   };
 
@@ -119,6 +127,7 @@ export default function ShoppingList() {
 
   const handleToggleComplete = async (item) => {
     try {
+      setErrorMessage("");
       const response = await fetch(`/api/shopping/${item._id}`, {
         method: "PUT",
         headers: {
@@ -133,24 +142,33 @@ export default function ShoppingList() {
 
       if (response.ok) {
         fetchData();
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setErrorMessage(errorData.error || "Failed to update shopping item.");
       }
     } catch (error) {
       console.error("Error updating item:", error);
+      setErrorMessage("Failed to update shopping item.");
     }
   };
 
   const handleDelete = async (itemId) => {
     if (confirm("Are you sure you want to delete this item?")) {
       try {
+        setErrorMessage("");
         const response = await fetch(`/api/shopping/${itemId}`, {
           method: "DELETE",
         });
 
         if (response.ok) {
           fetchData();
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          setErrorMessage(errorData.error || "Failed to delete shopping item.");
         }
       } catch (error) {
         console.error("Error deleting item:", error);
+        setErrorMessage("Failed to delete shopping item.");
       }
     }
   };
@@ -175,7 +193,7 @@ export default function ShoppingList() {
   return (
     <div className="space-y-6">
       <div className="pagetitle">
-        <h2 className="text-2xl font-bold">Shopping List</h2>
+        <h2 className="text-2xl font-bold"></h2>
         <button
           onClick={() => {
             setEditingItem(null);
@@ -188,6 +206,12 @@ export default function ShoppingList() {
           Add Item
         </button>
       </div>
+
+      {errorMessage && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
+      )}
 
       {showForm && (
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -397,7 +421,7 @@ export default function ShoppingList() {
                           item.notes) && (
                           <div className="text-xs text-gray-500 mt-2">
                             {item.estimatedCost && (
-                              <span>${item.estimatedCost} • </span>
+                              <span>£{item.estimatedCost} • </span>
                             )}
                             {item.supplier && <span>{item.supplier}</span>}
                           </div>

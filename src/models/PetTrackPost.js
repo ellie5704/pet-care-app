@@ -33,6 +33,11 @@ const postSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
+    },
     title: {
       type: String,
       required: true,

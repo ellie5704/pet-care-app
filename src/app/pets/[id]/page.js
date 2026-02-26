@@ -162,38 +162,43 @@ export default function PetDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Loader className="animate-spin text-blue-500" size={32} />
+      <div className="min-h-screen bg-[#f9faf7] flex items-center justify-center">
+        <Loader className="animate-spin text-[#697a63]" size={32} />
       </div>
     );
   }
 
   if (!pet) {
     return (
-      <div className="text-center py-12">
-        <AlertCircle className="mx-auto text-gray-400 mb-4" size={48} />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Pet Not Found</h2>
-        <p className="text-gray-600 mb-6">
-          The pet you're looking for doesn't exist or you don't have access to
-          it.
-        </p>
-        <button
-          onClick={() => router.push("/pets")}
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          Back to Pets
-        </button>
+      <div className="min-h-screen bg-[#f9faf7] p-4 md:p-6">
+        <div className="max-w-6xl mx-auto bg-white shadow-md rounded-2xl p-8 text-center">
+          <AlertCircle className="mx-auto text-[#9aa59a] mb-4" size={48} />
+          <h2 className="text-2xl font-bold text-[#4f5a4c] mb-2">
+            Pet Not Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            The pet you're looking for doesn't exist or you don't have access
+            to it.
+          </p>
+          <button
+            onClick={() => router.push("/pets")}
+            className="bg-[#697a63] text-white px-6 py-2 rounded-lg hover:bg-[#55624f] transition"
+          >
+            Back to Pets
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#f9faf7] p-4 md:p-6">
+      <div className=" bg-white shadow-md rounded-2xl p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => router.push("/pets")}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
+          className="flex items-center gap-2 text-[#697a63] hover:text-[#4f5a4c] transition"
         >
           <ArrowLeft size={20} />
           Back to Pets
@@ -201,14 +206,14 @@ export default function PetDetailPage() {
         <div className="flex gap-2">
           <button
             onClick={() => router.push(`/pets/${petId}/edit`)}
-            className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+            className="flex items-center gap-2 bg-[#697a63] text-white px-4 py-2 rounded-lg hover:bg-[#55624f] transition"
           >
             <Edit size={18} />
             Edit
           </button>
           <button
             onClick={handleDelete}
-            className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+            className="flex items-center gap-2 bg-[#ad2424] text-white px-4 py-2 rounded-lg hover:bg-[#9e2121] transition"
           >
             <Trash2 size={18} />
             Delete
@@ -217,7 +222,7 @@ export default function PetDetailPage() {
       </div>
 
       {/* Profile Header */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="bg-[#f5f7f3] rounded-2xl border border-[#dbe1d4] overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           {/* Profile Picture */}
           <div className="md:col-span-1">
@@ -229,8 +234,8 @@ export default function PetDetailPage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
-                  <PawPrint size={80} className="text-white opacity-50" />
+                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                  <p className="text-gray-400 opacity-50">No image</p>
                 </div>
               )}
             </div>
@@ -239,7 +244,7 @@ export default function PetDetailPage() {
           {/* Basic Info */}
           <div className="md:col-span-2 space-y-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-4xl font-bold text-[#4f5a4c] mb-2">
                 {pet.name}
               </h1>
               <p className="text-xl text-gray-600 capitalize">{pet.animal}</p>
@@ -257,7 +262,7 @@ export default function PetDetailPage() {
                 <select
                   value={pet.primaryCarer?._id || ""}
                   onChange={(e) => handleUpdatePrimaryCarer(e.target.value)}
-                  className="w-full md:w-auto border border-gray-300 rounded-lg px-4 py-2"
+                  className="w-full md:w-auto border border-gray-300 rounded-lg px-4 py-2 bg-white"
                 >
                   <option value="">Not assigned</option>
                   {householdMembers.map((member) => (
@@ -268,7 +273,7 @@ export default function PetDetailPage() {
                 </select>
               ) : pet.primaryCarer ? (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-full bg-[#697a63] text-white flex items-center justify-center font-bold">
                     {pet.primaryCarer.name?.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -289,7 +294,7 @@ export default function PetDetailPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-gray-200 pt-4">
               {pet.age && (
                 <div className="flex items-center gap-2">
-                  <Calendar size={20} className="text-blue-500" />
+                  <Calendar size={20} className="text-[#697a63]" />
                   <div>
                     <p className="text-xs text-gray-600">Age</p>
                     <p className="font-semibold text-gray-900">
@@ -300,7 +305,7 @@ export default function PetDetailPage() {
               )}
               {pet.weight && (
                 <div className="flex items-center gap-2">
-                  <Weight size={20} className="text-blue-500" />
+                  <Weight size={20} className="text-[#697a63]" />
                   <div>
                     <p className="text-xs text-gray-600">Weight</p>
                     <p className="font-semibold text-gray-900">
@@ -311,7 +316,7 @@ export default function PetDetailPage() {
               )}
               {pet.dateOfBirth && (
                 <div className="flex items-center gap-2">
-                  <Cake size={20} className="text-blue-500" />
+                  <Cake size={20} className="text-[#697a63]" />
                   <div>
                     <p className="text-xs text-gray-600">Birthday</p>
                     <p className="font-semibold text-gray-900">
@@ -322,7 +327,7 @@ export default function PetDetailPage() {
               )}
               {pet.microchipNumber && (
                 <div className="flex items-center gap-2">
-                  <Activity size={20} className="text-blue-500" />
+                  <Activity size={20} className="text-[#697a63]" />
                   <div>
                     <p className="text-xs text-gray-600">Microchip</p>
                     <p className="font-semibold text-gray-900 text-xs">
@@ -339,10 +344,10 @@ export default function PetDetailPage() {
       {/* Details Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Health Information */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Heart className="text-red-500" size={24} />
-            <h2 className="text-xl font-bold text-gray-900">
+            <Heart className="text-[#697a63]" size={24} />
+            <h2 className="text-xl font-bold text-[#4f5a4c]">
               Health Information
             </h2>
           </div>
@@ -382,10 +387,10 @@ export default function PetDetailPage() {
         </div>
 
         {/* Medical History */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
-            <FileText className="text-blue-500" size={24} />
-            <h2 className="text-xl font-bold text-gray-900">Medical History</h2>
+            <FileText className="text-[#697a63]" size={24} />
+            <h2 className="text-xl font-bold text-[#4f5a4c]">Medical History</h2>
           </div>
 
           {pet.medicalHistory && pet.medicalHistory.length > 0 ? (
@@ -393,7 +398,7 @@ export default function PetDetailPage() {
               {pet.medicalHistory.map((record, index) => (
                 <div
                   key={index}
-                  className="border-l-4 border-blue-500 pl-4 py-2"
+                  className="border-l-4 border-[#697a63] pl-4 py-2"
                 >
                   <p className="font-semibold text-gray-900">
                     {record.condition}
@@ -415,10 +420,10 @@ export default function PetDetailPage() {
         </div>
 
         {/* Medications */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Activity className="text-green-500" size={24} />
-            <h2 className="text-xl font-bold text-gray-900">Medications</h2>
+            <Activity className="text-[#697a63]" size={24} />
+            <h2 className="text-xl font-bold text-[#4f5a4c]">Medications</h2>
           </div>
 
           {pet.medications && pet.medications.length > 0 ? (
@@ -449,10 +454,10 @@ export default function PetDetailPage() {
         </div>
 
         {/* Vaccinations */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
-            <AlertCircle className="text-purple-500" size={24} />
-            <h2 className="text-xl font-bold text-gray-900">Vaccinations</h2>
+            <AlertCircle className="text-[#697a63]" size={24} />
+            <h2 className="text-xl font-bold text-[#4f5a4c]">Vaccinations</h2>
           </div>
 
           {pet.vaccinations && pet.vaccinations.length > 0 ? (
@@ -489,17 +494,17 @@ export default function PetDetailPage() {
 
       {/* Medical Records */}
       {pet.medicalRecords && pet.medicalRecords.length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
-            <FileText className="text-orange-500" size={24} />
-            <h2 className="text-xl font-bold text-gray-900">Medical Records</h2>
+            <FileText className="text-[#697a63]" size={24} />
+            <h2 className="text-xl font-bold text-[#4f5a4c]">Medical Records</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {pet.medicalRecords.map((record, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition"
+                className="border border-gray-200 rounded-lg p-4 hover:bg-[#f5f7f3] transition"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
@@ -517,7 +522,7 @@ export default function PetDetailPage() {
                   </div>
                   <button
                     onClick={() => setSelectedMedicalRecord(record)}
-                    className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition flex-shrink-0"
+                    className="p-2 text-[#697a63] hover:bg-[#dbe1d4] rounded-lg transition flex-shrink-0"
                     title="View file"
                   >
                     <Eye size={18} />
@@ -537,6 +542,7 @@ export default function PetDetailPage() {
           onClose={() => setSelectedMedicalRecord(null)}
         />
       )}
+      </div>
     </div>
   );
 }

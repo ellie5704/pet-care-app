@@ -48,6 +48,7 @@ export async function POST(request, { params }) {
 
     await post.populate("petId", "name profileImage");
     await post.populate("authorId", "name email");
+    await post.populate("assignedTo", "name email");
     await post.populate("resolvedBy", "name");
     await post.populate("replies.authorId", "name email");
 

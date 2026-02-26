@@ -53,7 +53,6 @@ export default function CalendarPage() {
     try {
       setLoading(true);
 
-      // Fetch user info
       const userResponse = await fetch("/api/auth/me");
       const userData = await userResponse.json();
 
@@ -64,7 +63,6 @@ export default function CalendarPage() {
 
       setCurrentUser(userData.user);
 
-      // Fetch household members
       const membersResponse = await fetch("/api/household/members");
       const membersData = await membersResponse.json();
 
@@ -76,12 +74,10 @@ export default function CalendarPage() {
         setIsOwner(currentMember?.role === "owner");
       }
 
-      // Fetch pets
       const petsResponse = await fetch("/api/pets");
       const petsData = await petsResponse.json();
       setPets(Array.isArray(petsData) ? petsData : []);
 
-      // Fetch appointments for current month +/- 15 days
       const startDate = new Date(currentMonth);
       startDate.setDate(1);
       startDate.setDate(startDate.getDate() - 15);
@@ -316,132 +312,133 @@ export default function CalendarPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Loader className="animate-spin text-blue-500" size={32} />
+      <div className="min-h-screen bg-[#f9faf7] flex items-center justify-center">
+        <Loader className="animate-spin text-[#697a63]" size={32} />
       </div>
     );
   }
 
-  // Show appointment detail view
   if (showDetail && selectedAppointment) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <button
-          onClick={() => setShowDetail(false)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
-        >
-          <ArrowLeft size={20} />
-          Back to Calendar
-        </button>
+      <div className="min-h-screen bg-[#f9faf7] p-4 md:p-6">
+        <div className="space-y-6">
+          <button
+            onClick={() => setShowDetail(false)}
+            className="flex items-center gap-2 text-[#697a63] hover:text-[#4f5a4c]"
+          >
+            <ArrowLeft size={20} />
+            Back to Calendar
+          </button>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {selectedAppointment.title}
-              </h1>
-              <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                {appointmentTypeLabels[selectedAppointment.appointmentType]}
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEdit(selectedAppointment)}
-                className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"
-              >
-                <Edit size={20} />
-              </button>
-              {isOwner && (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <h1 className="text-3xl font-bold text-[#4f5a4c] mb-2">
+                  {selectedAppointment.title}
+                </h1>
+                <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-[#dbe1d4] text-[#4f5a4c]">
+                  {appointmentTypeLabels[selectedAppointment.appointmentType]}
+                </span>
+              </div>
+              <div className="flex gap-2">
                 <button
-                  onClick={() => handleDelete(selectedAppointment._id)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                  onClick={() => handleEdit(selectedAppointment)}
+                  className="p-2 text-[#697a63] hover:bg-[#dbe1d4] rounded-lg transition"
                 >
-                  <Trash2 size={20} />
+                  <Edit size={20} />
                 </button>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Pet</h3>
-              <div className="flex items-center gap-3">
-                {selectedAppointment.petId?.profileImage && (
-                  <img
-                    src={selectedAppointment.petId.profileImage}
-                    alt={selectedAppointment.petId.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
+                {isOwner && (
+                  <button
+                    onClick={() => handleDelete(selectedAppointment._id)}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                  >
+                    <Trash2 size={20} />
+                  </button>
                 )}
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    {selectedAppointment.petId?.name}
-                  </p>
-                  <p className="text-sm text-gray-600 capitalize">
-                    {selectedAppointment.petId?.animal}
-                  </p>
-                </div>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-sm font-medium text-gray-600 mb-2">
-                Assigned To
-              </h3>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-greens-500 text-white flex items-center justify-center font-bold">
-                  {selectedAppointment.assignedTo?.name
-                    ?.charAt(0)
-                    .toUpperCase()}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    {selectedAppointment.assignedTo?.name}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {selectedAppointment.assignedTo?.email}
-                  </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm font-medium text-gray-600 mb-2">Pet</h3>
+                <div className="flex items-center gap-3">
+                  {selectedAppointment.petId?.profileImage && (
+                    <img
+                      src={selectedAppointment.petId.profileImage}
+                      alt={selectedAppointment.petId.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                  )}
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {selectedAppointment.petId?.name}
+                    </p>
+                    <p className="text-sm text-gray-600 capitalize">
+                      {selectedAppointment.petId?.animal}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <h3 className="text-sm font-medium text-gray-600 mb-2">
-                Start Time
-              </h3>
-              <p className="text-gray-900">
-                {new Date(selectedAppointment.startDate).toLocaleString()}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-medium text-gray-600 mb-2">
-                End Time
-              </h3>
-              <p className="text-gray-900">
-                {new Date(selectedAppointment.endDate).toLocaleString()}
-              </p>
-            </div>
-
-            {selectedAppointment.location && (
-              <div className="md:col-span-2">
+              <div>
                 <h3 className="text-sm font-medium text-gray-600 mb-2">
-                  Location
+                  Assigned To
                 </h3>
-                <p className="text-gray-900">{selectedAppointment.location}</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-[#697a63] text-white flex items-center justify-center font-bold">
+                    {selectedAppointment.assignedTo?.name
+                      ?.charAt(0)
+                      .toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {selectedAppointment.assignedTo?.name}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {selectedAppointment.assignedTo?.email}
+                    </p>
+                  </div>
+                </div>
               </div>
-            )}
 
-            {selectedAppointment.notes && (
-              <div className="md:col-span-2">
+              <div>
                 <h3 className="text-sm font-medium text-gray-600 mb-2">
-                  Notes
+                  Start Time
                 </h3>
-                <p className="text-gray-900 whitespace-pre-wrap">
-                  {selectedAppointment.notes}
+                <p className="text-gray-900">
+                  {new Date(selectedAppointment.startDate).toLocaleString()}
                 </p>
               </div>
-            )}
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-600 mb-2">
+                  End Time
+                </h3>
+                <p className="text-gray-900">
+                  {new Date(selectedAppointment.endDate).toLocaleString()}
+                </p>
+              </div>
+
+              {selectedAppointment.location && (
+                <div className="md:col-span-2">
+                  <h3 className="text-sm font-medium text-gray-600 mb-2">
+                    Location
+                  </h3>
+                  <p className="text-gray-900">{selectedAppointment.location}</p>
+                </div>
+              )}
+
+              {selectedAppointment.notes && (
+                <div className="md:col-span-2">
+                  <h3 className="text-sm font-medium text-gray-600 mb-2">
+                    Notes
+                  </h3>
+                  <p className="text-gray-900 whitespace-pre-wrap">
+                    {selectedAppointment.notes}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -449,207 +446,201 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="componentmw">
-      {/* Header */}
-      <div className="pagetitle">
-        <h1 className="text-3xl font-bold">Calendar</h1>
-        <button
-          onClick={() => {
-            setEditingAppointment(null);
-            const now = new Date();
-            setFormData({
-              petId: "",
-              assignedTo: "",
-              title: "",
-              appointmentType: "vet-checkup",
-              startDate: now.toISOString().slice(0, 16),
-              endDate: new Date(now.getTime() + 60 * 60 * 1000)
-                .toISOString()
-                .slice(0, 16),
-              notes: "",
-              location: "",
-            });
-            setShowForm(true);
-          }}
-          className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          <Plus size={20} />
-          Add Appointment
-        </button>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white rounded-lg shadow-md p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Filter size={20} className="text-gray-600" />
-          <h3 className="font-semibold text-gray-900">Filters</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Filter by Pet
-            </label>
-            <select
-              value={filters.petId}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, petId: e.target.value }))
-              }
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            >
-              <option value="">All Pets</option>
-              {pets.map((pet) => (
-                <option key={pet._id} value={pet._id}>
-                  {pet.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Filter by Member
-            </label>
-            <select
-              value={filters.assignedTo}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, assignedTo: e.target.value }))
-              }
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            >
-              <option value="">All Members</option>
-              {members.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Calendar and Appointments Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar */}
-        <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
-          {/* Month/Year Header */}
-          <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={previousMonth}
-              className="p-2 hover:bg-gray-100 rounded transition"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <h3 className="text-xl font-semibold">
-              {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-            </h3>
-            <button
-              onClick={nextMonth}
-              className="p-2 hover:bg-gray-100 rounded transition"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-
-          {/* Day names */}
-          <div className="grid grid-cols-7 gap-2 mb-2">
-            {dayNames.map((day) => (
-              <div
-                key={day}
-                className="text-center font-semibold text-gray-600 text-sm py-2"
-              >
-                {day}
-              </div>
-            ))}
-          </div>
-
-          {/* Calendar grid */}
-          <div className="grid grid-cols-7 gap-2">
-            {calendarDays.map((date, index) => {
-              const appointmentsForDate = getAppointmentsForDate(date);
-              return (
-                <button
-                  key={index}
-                  onClick={() => date && setSelectedDate(date)}
-                  className={`
-                    aspect-square p-2 rounded-lg text-sm font-medium transition
-                    ${
-                      !date
-                        ? "bg-gray-50 cursor-default"
-                        : isSelected(date)
-                          ? "bg-green-500 text-white"
-                          : isToday(date)
-                            ? "bg-blue-100 text-blue-900 border-2 border-blue-400"
-                            : "bg-gray-50 hover:bg-blue-50"
-                    }
-                    ${appointmentsForDate.length > 0 ? "ring-2 ring-orange-400" : ""}
-                  `}
-                >
-                  {date && (
-                    <div className="h-full flex flex-col items-center justify-center">
-                      <span>{date.getDate()}</span>
-                      {appointmentsForDate.length > 0 && (
-                        <span className="text-xs mt-1">
-                          {appointmentsForDate.length}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+    <div className="min-h-screen bg-[#f9faf7] p-4 md:p-6">
+      <div className="bg-white shadow-md rounded-2xl p-6 space-y-6">
+        <div className="flex items-center justify-between pb-6 border-b border-gray-200">
+          <h1 className="text-3xl font-semibold text-[#4f5a4c] tracking-tight">
+            Calendar
+          </h1>
+          <button
+            onClick={() => {
+              setEditingAppointment(null);
+              const now = new Date();
+              setFormData({
+                petId: "",
+                assignedTo: "",
+                title: "",
+                appointmentType: "vet-checkup",
+                startDate: now.toISOString().slice(0, 16),
+                endDate: new Date(now.getTime() + 60 * 60 * 1000)
+                  .toISOString()
+                  .slice(0, 16),
+                notes: "",
+                location: "",
+              });
+              setShowForm(true);
+            }}
+            className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+          >
+            <Plus size={20} />
+            Add Appointment
+          </button>
         </div>
 
-        {/* Appointments for Selected Date */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-4">
-            <CalendarIcon size={20} className="text-blue-500" />
-            <h3 className="font-semibold text-gray-900">
-              {selectedDate.toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-              })}
-            </h3>
+            <Filter size={20} className="text-[#697a63]" />
+            <h3 className="font-semibold text-[#4f5a4c]">Filters</h3>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Filter by Pet
+              </label>
+              <select
+                value={filters.petId}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, petId: e.target.value }))
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white"
+              >
+                <option value="">All Pets</option>
+                {pets.map((pet) => (
+                  <option key={pet._id} value={pet._id}>
+                    {pet.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Filter by Member
+              </label>
+              <select
+                value={filters.assignedTo}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, assignedTo: e.target.value }))
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white"
+              >
+                <option value="">All Members</option>
+                {members.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
-          {getSelectedDateAppointments().length > 0 ? (
-            <div className="space-y-3">
-              {getSelectedDateAppointments().map((apt) => (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={previousMonth}
+                className="p-2 hover:bg-[#f5f7f3] rounded transition"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <h3 className="text-xl font-semibold text-[#4f5a4c]">
+                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+              </h3>
+              <button
+                onClick={nextMonth}
+                className="p-2 hover:bg-[#f5f7f3] rounded transition"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-7 gap-2 mb-2">
+              {dayNames.map((day) => (
                 <div
-                  key={apt._id}
-                  onClick={() => handleAppointmentClick(apt._id)}
-                  className="border-l-4 border-blue-500 pl-4 py-3 hover:bg-gray-50 transition rounded cursor-pointer"
+                  key={day}
+                  className="text-center font-semibold text-gray-600 text-sm py-2"
                 >
-                  <p className="font-semibold text-gray-900">{apt.title}</p>
-                  <p className="text-sm text-gray-600">
-                    {apt.petId?.name} •{" "}
-                    {appointmentTypeLabels[apt.appointmentType]}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
-                    <Clock size={14} />
-                    {new Date(apt.startDate).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </div>
+                  {day}
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <CalendarIcon className="mx-auto text-gray-400 mb-2" size={32} />
-              <p className="text-gray-500">No appointments</p>
+
+            <div className="grid grid-cols-7 gap-2">
+              {calendarDays.map((date, index) => {
+                const appointmentsForDate = getAppointmentsForDate(date);
+                return (
+                  <button
+                    key={index}
+                    onClick={() => date && setSelectedDate(date)}
+                    className={`
+                      aspect-square p-2 rounded-lg text-sm font-medium transition
+                      ${
+                        !date
+                          ? "bg-gray-50 cursor-default"
+                          : isSelected(date)
+                            ? "bg-[#697a63] text-white"
+                            : isToday(date)
+                              ? "bg-[#dbe1d4] text-[#4f5a4c] border-2 border-[#697a63]"
+                              : "bg-gray-50 hover:bg-[#f5f7f3]"
+                      }
+                      ${appointmentsForDate.length > 0 ? "ring-2 ring-[#9fb39a]" : ""}
+                    `}
+                  >
+                    {date && (
+                      <div className="h-full flex flex-col items-center justify-center">
+                        <span>{date.getDate()}</span>
+                        {appointmentsForDate.length > 0 && (
+                          <span className="text-xs mt-1">
+                            {appointmentsForDate.length}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
-          )}
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <CalendarIcon size={20} className="text-[#697a63]" />
+              <h3 className="font-semibold text-[#4f5a4c]">
+                {selectedDate.toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                })}
+              </h3>
+            </div>
+
+            {getSelectedDateAppointments().length > 0 ? (
+              <div className="space-y-3">
+                {getSelectedDateAppointments().map((apt) => (
+                  <div
+                    key={apt._id}
+                    onClick={() => handleAppointmentClick(apt._id)}
+                    className="border-l-4 border-[#697a63] pl-4 py-3 hover:bg-[#f5f7f3] transition rounded cursor-pointer"
+                  >
+                    <p className="font-semibold text-gray-900">{apt.title}</p>
+                    <p className="text-sm text-gray-600">
+                      {apt.petId?.name} - {appointmentTypeLabels[apt.appointmentType]}
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                      <Clock size={14} />
+                      {new Date(apt.startDate).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <CalendarIcon className="mx-auto text-gray-400 mb-2" size={32} />
+                <p className="text-gray-500">No appointments</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Add/Edit Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-2xl font-bold text-[#4f5a4c]">
                   {editingAppointment ? "Edit Appointment" : "New Appointment"}
                 </h2>
                 <button
@@ -671,7 +662,7 @@ export default function CalendarPage() {
                       value={formData.petId}
                       onChange={handleInputChange}
                       required
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white"
                     >
                       <option value="">Select a pet</option>
                       {pets.map((pet) => (
@@ -691,7 +682,7 @@ export default function CalendarPage() {
                       value={formData.assignedTo}
                       onChange={handleInputChange}
                       required
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white"
                     >
                       <option value="">Select a member</option>
                       {members.map((member) => (
@@ -725,7 +716,7 @@ export default function CalendarPage() {
                       name="appointmentType"
                       value={formData.appointmentType}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white"
                     >
                       <option value="vet-checkup">Vet Checkup</option>
                       <option value="emergency">Emergency</option>
@@ -796,7 +787,7 @@ export default function CalendarPage() {
                 <div className="flex gap-4 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition"
+                    className="flex-1 bg-[#697a63] text-white px-6 py-2 rounded-lg hover:bg-[#55624f] transition"
                   >
                     {editingAppointment
                       ? "Update Appointment"
