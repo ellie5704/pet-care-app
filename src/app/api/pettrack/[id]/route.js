@@ -27,6 +27,7 @@ export async function GET(request, { params }) {
     const post = await PetTrackPost.findById(id)
       .populate("petId", "name profileImage")
       .populate("authorId", "name email")
+      .populate("assignedTo", "name email")
       .populate("resolvedBy", "name")
       .populate("replies.authorId", "name email");
 
@@ -47,7 +48,10 @@ export async function GET(request, { params }) {
     return Response.json(post);
   } catch (error) {
     console.error("Get post error:", error);
-    return Response.json({ error: "Failed to get post" }, { status: 500 });
+    return Response.json(
+      { error: error.message || "Failed to get post" },
+      { status: 500 },
+    );
   }
 }
 
@@ -94,6 +98,44 @@ export async function PUT(request, { params }) {
       if (updates.petId) post.petId = updates.petId;
     }
 
+    // Author or household owner can reassign issue.
+    if (Object.prototype.hasOwnProperty.call(updates, "assignedTo")) {
+      let canAssign = post.authorId.toString() === session.userId;
+
+      if (!canAssign) {
+        const membership = await HouseholdMember.findOne({
+          householdId: user.householdId,
+          userId: user._id,
+        });
+        canAssign = membership?.role === "owner";
+      }
+
+      if (!canAssign) {
+        return Response.json(
+          { error: "Only the author or household owner can assign issues" },
+          { status: 403 },
+        );
+      }
+
+      if (!updates.assignedTo) {
+        post.assignedTo = null;
+      } else {
+        const assigneeMembership = await HouseholdMember.findOne({
+          householdId: user.householdId,
+          userId: updates.assignedTo,
+        });
+
+        if (!assigneeMembership) {
+          return Response.json(
+            { error: "Assigned user must be in your household" },
+            { status: 400 },
+          );
+        }
+
+        post.assignedTo = updates.assignedTo;
+      }
+    }
+
     // Only owner can resolve/unresolve posts
     if (updates.isResolved !== undefined) {
       const membership = await HouseholdMember.findOne({
@@ -122,13 +164,17 @@ export async function PUT(request, { params }) {
 
     await post.populate("petId", "name profileImage");
     await post.populate("authorId", "name email");
+    await post.populate("assignedTo", "name email");
     await post.populate("resolvedBy", "name");
     await post.populate("replies.authorId", "name email");
 
     return Response.json(post);
   } catch (error) {
     console.error("Update post error:", error);
-    return Response.json({ error: "Failed to update post" }, { status: 500 });
+    return Response.json(
+      { error: error.message || "Failed to update post" },
+      { status: 500 },
+    );
   }
 }
 
@@ -173,6 +219,9 @@ export async function DELETE(request, { params }) {
     return Response.json({ success: true, message: "Post deleted" });
   } catch (error) {
     console.error("Delete post error:", error);
-    return Response.json({ error: "Failed to delete post" }, { status: 500 });
+    return Response.json(
+      { error: error.message || "Failed to delete post" },
+      { status: 500 },
+    );
   }
 }

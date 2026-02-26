@@ -1,10 +1,11 @@
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export function middleware(request) {
+export default clerkMiddleware((auth, request) => {
   const session = request.cookies.get("household_session");
   const { pathname } = request.nextUrl;
 
-  // Public routes that don't require authentication
+  // Public routes that don't require household_session authentication
   const publicRoutes = ["/login", "/signup", "/api/auth", "/accept-invite"];
   const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route),
@@ -21,7 +22,7 @@ export function middleware(request) {
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],

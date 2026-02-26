@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import dbConnect from "@/lib/db";
 import User from "@/models/user";
 import PetTrackPost from "@/models/PetTrackPost";
+import HouseholdMember from "@/models/householdMembers";
 import { sessionOptions } from "@/lib/session";
 
 export async function GET(request) {
@@ -25,6 +26,7 @@ export async function GET(request) {
     const posts = await PetTrackPost.find({ householdId: user.householdId })
       .populate("petId", "name profileImage")
       .populate("authorId", "name email")
+      .populate("assignedTo", "name email")
       .populate("resolvedBy", "name")
       .populate("replies.authorId", "name email")
       .sort({ isResolved: 1, createdAt: -1 }); // Unresolved first, then by date
@@ -32,7 +34,10 @@ export async function GET(request) {
     return Response.json(posts);
   } catch (error) {
     console.error("Get posts error:", error);
-    return Response.json({ error: "Failed to get posts" }, { status: 500 });
+    return Response.json(
+      { error: error.message || "Failed to get posts" },
+      { status: 500 },
+    );
   }
 }
 
@@ -52,13 +57,31 @@ export async function POST(request) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
 
-    const { petId, title, content } = await request.json();
+    const { petId, title, content, assignedTo } = await request.json();
+
+    let normalizedAssignedTo = null;
+    if (assignedTo) {
+      const member = await HouseholdMember.findOne({
+        householdId: user.householdId,
+        userId: assignedTo,
+      });
+
+      if (!member) {
+        return Response.json(
+          { error: "Assigned user must be in your household" },
+          { status: 400 },
+        );
+      }
+
+      normalizedAssignedTo = assignedTo;
+    }
 
     // Create new post - author automatically marked as read
     const post = await PetTrackPost.create({
       householdId: user.householdId,
       petId,
       authorId: session.userId,
+      assignedTo: normalizedAssignedTo,
       title,
       content,
       readBy: [session.userId], // Author has read it
@@ -67,10 +90,14 @@ export async function POST(request) {
     // Populate before returning
     await post.populate("petId", "name profileImage");
     await post.populate("authorId", "name email");
+    await post.populate("assignedTo", "name email");
 
     return Response.json(post, { status: 201 });
   } catch (error) {
     console.error("Create post error:", error);
-    return Response.json({ error: "Failed to create post" }, { status: 500 });
+    return Response.json(
+      { error: error.message || "Failed to create post" },
+      { status: 500 },
+    );
   }
 }
